@@ -1,81 +1,94 @@
 updatePlots = (data, id) => {
-  let sample = data.samples.filter(sample => sample.otu_ids === id);
+
+  console.log(data)
+
+  let sample = data.samples.filter(sample => sample.id === id)[0];
+
+  console.log(sample)
+
 
   // Bubble Chart Data
   let x_bubble = sample.otu_ids; 
   let y_bubble = sample.sample_values; 
   let label_bubble = sample.otu_labels;
-
+  console.log(x_bubble)
+  console.log(y_bubble)
 
 
 // Bubble chart
-  var trace1 = {
+  var bubble_data = [{
     x: x_bubble,
     y: y_bubble,
     mode: 'markers',
+    text: label_bubble,
     marker: {
-      color: [x_bubble],
-      size: [y_bubble]
+      color: x_bubble,
+      size: y_bubble
     }
-  };
+  }];
   
-  var data = [trace1];
   
-  var layout = {
+  var bubble_layout = {
     title: 'OTU ID',
     showlegend: false,
-    height: 600,
-    width: 600
   };
   
-  Plotly.newPlot('bubble', data, layout);
+  Plotly.newPlot("bubble", bubble_data, bubble_layout);
+
 // Bubble Chart End
 
 
 
 // Bar Chart Data
-// Slicing the top ten OTUs as they are already displayed in descending order
-
-  var sliced = sample.otu_ids.slice(0, 10)
-  let y_bar = sample.otu_lables; 
-  let x_bar = sample.sample_values; 
+// Slicing the top ten OTUs
+  var bar_otu_ids = sample.otu_ids.slice(0, 10).map(x => `${x}`).reverse()
+  let bar_otu_labels = sample.otu_labels.slice(0, 10).reverse(); 
+  let bar_sample_values = sample.sample_values.slice(0, 10).reverse(); 
 
 
 
 // Bar Chart
-  var trace2 = {
-    x: x_bar,
-    y: y_bar,
-    type: "bar"
-  };
+  var bar_data = [{
+    x: bar_sample_values,
+    y: bar_otu_ids,
+    text: bar_otu_labels,
+    type: "bar",
+    orientation: "h",
+  }];
 
-  var data = [trace2];
-
-  var layout = {
+  var bar_layout = {
     title: "Top Ten OTUs Found in the Individual",
     xaxis: { title: "Values" },
-    yaxis: { title: "OTU ID"}
+    yaxis: { title: ""}
   };
 
 
-  Plotly.newPlot("bar", data, layout);
+  Plotly.newPlot("bar", bar_data, bar_layout);
   // Bar Chart End
-
-
-
 }
 
+//  // Metadata Display
+// updatePanel = (data, id) =>{
+//   let metadata = data.metadata.filter(sample => sample.id === id)[0]
+//   var panel = d3.select("#sample-metadata"), 
 
+//   // pass in data being stored in metadata, using object entries to add each key and value pairs to the panel (similar to creating a table) panel.append.text
+// }
 
+// Updates plots upon selection in the drop down menu
 handleChange = (data) => {
   let id = d3.event.target.value; 
   updatePlots(data, id)
+  updatePanel(data, id)
 }
 
 
+// Pull in data & creating drop down 
 
 d3.json("data/samples.json").then(data => {
   console.log(data);
+
+
   
     let mySelect = d3.select("#selDataset");
     
@@ -83,6 +96,10 @@ d3.json("data/samples.json").then(data => {
       mySelect.append("option").attr("value", element).text(element);
       
     })
+
+    // initial plots
+    updatePlots(data, data.names[0])
+    updatePanel(data, data.names[0])
 
     mySelect.on("change", () => handleChange(data))
 
