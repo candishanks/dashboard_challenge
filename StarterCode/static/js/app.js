@@ -71,9 +71,9 @@ updatePlots = (data, id) => {
 // updatePanel = (data, id) =>{
 //   let metadata = data.metadata.filter(sample => sample.id === id)[0]
 //   var panel = d3.select("#sample-metadata"), 
-
-//   // pass in data being stored in metadata, using object entries to add each key and value pairs to the panel (similar to creating a table) panel.append.text
 // }
+  // pass in data being stored in metadata, using object entries to add each key and value pairs to the panel (similar to creating a table) panel.append.text
+
 
 // Updates plots upon selection in the drop down menu
 handleChange = (data) => {
@@ -104,18 +104,3 @@ d3.json("data/samples.json").then(data => {
     mySelect.on("change", () => handleChange(data))
 
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
